@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template
 from flask_socketio import SocketIO
 from flask_restful import Resource, Api
@@ -19,23 +20,24 @@ socketio_z = SocketIO(app, cors_allowed_origins="*")
 
 
 def magnum():
-    sio1.connect('http://192.168.43.92:5000')
-    sio2.connect('http://192.168.43.92:5001')
+    sio1.connect('http://192.168.43.92:5000',namespaces=['/ansible'])
+    sio2.connect('http://192.168.43.92:5001',namespaces=['/ansible'])
 
 
-@socketio_z.on('message')
+@socketio_z.on('message',namespace='/chat')
 def handle_message(message):
     print(message)
     if message["message"] == "magnum":
         t1 = threading.Thread(name="magnum", target=magnum)
         t1.start()
         time.sleep(5)
-        emit("message", "magnum", broadcast=True)
+        # emit("message", "magnum123455")
+        emit(message, namespace='/ansible')
     else:
-        emit("message", "hello world")
+        emit(message, namespace='/chat')
 
 
-@socketio_z.on('response')
+@socketio_z.on('response',namespace='/ansible')
 def handle_response(response):
     print(response)
     emit('message', response,  broadcast=True)
@@ -51,15 +53,12 @@ def handle_my_custom_event(msg):
     emit('message', msg)
 
 
-def send_Message():
-    handle_my_custom_event("hi")
-
 
 # client code
-@sio1.event
+@sio1.event(namespace='/ansible')
 def message(message):
     print('I received a message!', message)
-    sio2.emit('response2', message)
+    sio2.emit('response2', message,namespace='/ansible')
 
 # Checking Event Start
 
@@ -86,10 +85,10 @@ def disconnect():
 # Checking Event Start 2
 
 
-@sio2.event
+@sio2.event(namespace='/ansible')
 def response2(response2):
     print('I received a message!', response2)
-    sio1.emit('response', response2)
+    sio1.emit('response', response2,namespace='/ansible')
 
 # Checking Event Stop 2
 
