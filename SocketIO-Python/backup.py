@@ -8,7 +8,7 @@ import time
 import ClientTwoSocket
 import socketio
 import time
-
+check = 0
 sio1 = socketio.Client()
 sio2 = socketio.Client()
 
@@ -20,78 +20,41 @@ socketio_z = SocketIO(app, cors_allowed_origins="*")
 
 
 def magnum():
-    sio1.connect('http://192.168.43.92:5000',namespaces=['/ansible'])
-    sio2.connect('http://192.168.43.92:5001',namespaces=['/ansible'])
+    sio1.connect('http://192.168.43.92:5000',  namespaces=['/ansible'])
+    emit("message", "hello world", namespace='/ansible')
 
 
-@socketio_z.on('message',namespace='/chat')
+@socketio_z.on('message', namespace='/chat')
 def handle_message(message):
+    global check
     print(message)
     if message["message"] == "magnum":
-        t1 = threading.Thread(name="magnum", target=magnum)
-        t1.start()
-        time.sleep(5)
-        # emit("message", "magnum123455")
-        emit(message, namespace='/ansible')
+        if(check == 0):
+            check = 1
+            t1 = threading.Thread(name="magnum", target=magnum)
+            t1.start()
+            # time.sleep(5)
+
     else:
-        emit(message, namespace='/chat')
+        emit("message", "hello world", namespace='/chat')
 
 
-@socketio_z.on('response',namespace='/ansible')
-def handle_response(response):
-    print(response)
-    emit('message', response,  broadcast=True)
+@socketio_z.on('message', namespace='/ansible')
+def on_message(message):
+    print("meessgae recieved")
+    emit("message", "hello world2", namespace='/chat')
 
 
-@socketio_z.on('json')
-def handle_json(json):
-    print('received json: ' + str(json))
+@sio1.on('connect', namespace='/ansible')
+def get_message():
+    print("connected")
 
 
-@socketio_z.on('my event')
-def handle_my_custom_event(msg):
-    emit('message', msg)
-
-
-
-# client code
-@sio1.event(namespace='/ansible')
+@sio1.event
 def message(message):
     print('I received a message!', message)
-    sio2.emit('response2', message,namespace='/ansible')
 
-# Checking Event Start
-
-
-@sio2.event
-@sio1.event
-def connect():
-    print("I'm connected!")
-
-
-@sio2.event
-@sio1.event
-def connect_error():
-    print("The connection failed!")
-
-
-@sio2.event
-@sio1.event
-def disconnect():
-    print("I'm disconnected!")
-
-# Checking Event Stop
-
-# Checking Event Start 2
-
-
-@sio2.event(namespace='/ansible')
-def response2(response2):
-    print('I received a message!', response2)
-    sio1.emit('response', response2,namespace='/ansible')
 
 # Checking Event Stop 2
-
-
 if __name__ == '__main__':
     socketio_z.run(app, host='0.0.0.0')

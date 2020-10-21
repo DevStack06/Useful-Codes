@@ -1,12 +1,14 @@
+import requests
 from flask import Flask, render_template
 from flask_socketio import SocketIO
 from flask_restful import Resource, Api
 from flask_socketio import send, emit
 import threading
 import time
-import ClientTwoSocket
 import socketio
-import time
+import sys
+sys.path.append("..")
+# from video import Select_Video
 
 sio1 = socketio.Client()
 sio2 = socketio.Client()
@@ -19,18 +21,19 @@ socketio_z = SocketIO(app, cors_allowed_origins="*")
 
 
 def magnum():
-    sio1.connect('http://192.168.43.92:5000')
-    sio2.connect('http://192.168.43.92:5001')
-    emit("message", "magnum", broadcast=True)
+    # ip_obj = IP()
+    url_ansible = "http://34.222.97.248:8090"
+    url_Own = "http://localhost:5000"
+    sio1.connect(url_Own)
+    sio2.connect(url_ansible)
 
 
 @socketio_z.on('message')
 def handle_message(message):
     print(message)
     if message["message"] == "magnum":
-        sio1.connect('http://192.168.43.92:5000')
-        sio2.connect('http://192.168.43.92:5001')
-        emit("message", "magnum", broadcast=True)
+        magnum()
+        emit("message", "spinup magnum infra", broadcast=True)
 
     #emit("message", "magnum", broadcast=True)
     else:
@@ -61,7 +64,7 @@ def send_Message():
 @sio1.event
 def message(message):
     print('I received a message!', message)
-    sio2.emit('response2', message)
+    sio2.emit('message', message)
 
 # Checking Event Start
 
@@ -89,9 +92,9 @@ def disconnect():
 
 
 @sio2.event
-def response2(response2):
-    print('I received a message!', response2)
-    sio1.emit('response', response2)
+def response(response):
+    print('I received a message!', response)
+    sio1.emit('response', response)
 
 # Checking Event Stop 2
 
