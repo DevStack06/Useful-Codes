@@ -10,14 +10,13 @@ app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 
-@socketio.on('message',namespace='/ansible')
+@socketio.on('message')
 def handle_message(message):
-    print(message['message'])
-    if message['message'] == "magnum":
-        Sendmsg()
+    print(message)
+    Sendmsg()
 
 
-@socketio.on('response2',namespace='/ansible')
+@socketio.on('response2')
 def handle_response(response2):
     print(response2)
     if response2 == "magnum":
@@ -37,13 +36,13 @@ def handle_my_custom_event(msg):
 
 def Sendmsg():
     print("hello")
-    socketio.emit('response2', "1st ho gya",namespace='/ansible')
+    socketio.emit('response', "1st ho gya")
     time.sleep(30)
-    socketio.emit('response2', "2rd ho gya",namespace='/ansible')
+    socketio.emit('response', "2rd ho gya")
     time.sleep(30)
-    socketio.emit('response2', "3rd ho gya",namespace='/ansible')
+    socketio.emit('response', "3rd ho gya")
     time.sleep(30)
-    socketio.emit('response2', "4th ho gya",namespace='/ansible')
+    socketio.emit('response', "4th ho gya")
 
 
 def send_Message():
@@ -51,4 +50,4 @@ def send_Message():
 
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5001)
+    socketio.run(app, host='0.0.0.0', port=8090)

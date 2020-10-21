@@ -10,8 +10,8 @@ import sys
 sys.path.append("..")
 # from video import Select_Video
 
-sio1 = socketio.Client()
-sio2 = socketio.Client()
+sio = socketio.Client()
+
 
 app = Flask(__name__)
 api = Api(app)
