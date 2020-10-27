@@ -37,12 +37,16 @@ def handle_my_custom_event(msg):
 def Sendmsg():
     print("hello")
     socketio.emit('response', "1st ho gya")
-    time.sleep(30)
+    time.sleep(10)
     socketio.emit('response', "2rd ho gya")
-    time.sleep(30)
+    time.sleep(10)
     socketio.emit('response', "3rd ho gya")
-    time.sleep(30)
+    time.sleep(10)
     socketio.emit('response', "4th ho gya")
+    time.sleep(10)
+    socketio.emit('response', "5th ho gya")
+    time.sleep(10)
+    socketio.emit('response', "6th ho gya")
 
 
 def send_Message():
