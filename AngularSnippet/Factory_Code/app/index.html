@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script src="index.js"></script>
+</head>
+
+<body> 
+  <h1>Square, Cube using factory!</h1>
+
+  <div ng-app="myApp">
+    <div ng-controller="CalculatorController">
+      Enter a number:
+      <input type="number" ng-model="num" />
+      <button ng-click="Square()">X<sup>2</sup></button>
+      <button ng-click="Cube()">X<sup>3</sup></button>
+
+      <div>{{answer}}</div>
+    </div>
+  </div>
+</body>
+
+</html>
+
+
+
